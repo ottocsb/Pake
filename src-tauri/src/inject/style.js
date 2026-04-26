@@ -1,4 +1,17 @@
 window.addEventListener("DOMContentLoaded", (_event) => {
+
+
+  const ads = `
+    .audio-center-promotion,
+    div.mixed-ad-carousel-wrapper,
+    .win-title-bar-tag,
+    .kbc-banner-wrapper,
+    #icon-app-download,
+    .win-title-bar-icon.animate-button.kookiconfont.title-icon-wrapper {
+      display: none !important;
+    }
+  `;
+
   // Customize and transform existing functions
   const contentCSS = `
     #page #footer-wrapper,
@@ -327,6 +340,10 @@ window.addEventListener("DOMContentLoaded", (_event) => {
   const contentStyleElement = document.createElement("style");
   contentStyleElement.textContent = contentCSS;
   document.head.appendChild(contentStyleElement);
+
+  const adsStyleElement = document.createElement("style");
+  adsStyleElement.textContent = ads;
+  document.head.appendChild(adsStyleElement);
 
   // Top spacing adapts to head-hiding scenarios
   const topPaddingCSS = `

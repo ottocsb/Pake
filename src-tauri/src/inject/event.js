@@ -1,3 +1,61 @@
+// Block useless tracking requests (Baidu analytics, Sentry, etc.)
+(function blockTrackingRequests() {
+  const blockedPatterns = [
+    /hm\.baidu\.com\/hm\.js/i,
+    /sentry\.kookapp\.cn/i,
+  ];
+  const isBlocked = (v) =>
+    typeof v === "string" && blockedPatterns.some((p) => p.test(v));
+
+  // 1. <script src="..."> dynamic loads
+  const srcDesc = Object.getOwnPropertyDescriptor(
+    HTMLScriptElement.prototype,
+    "src",
+  );
+  if (srcDesc?.set) {
+    Object.defineProperty(HTMLScriptElement.prototype, "src", {
+      ...srcDesc,
+      set(value) {
+        if (isBlocked(value)) return;
+        srcDesc.set.call(this, value);
+      },
+    });
+  }
+
+  // 2. fetch()
+  const originalFetch = window.fetch;
+  if (originalFetch) {
+    window.fetch = function (input, init) {
+      const url = typeof input === "string" ? input : input?.url;
+      if (isBlocked(url)) {
+        return Promise.resolve(new Response(null, { status: 204 }));
+      }
+      return originalFetch.call(this, input, init);
+    };
+  }
+
+  // 3. XMLHttpRequest
+  const originalOpen = XMLHttpRequest.prototype.open;
+  const originalSend = XMLHttpRequest.prototype.send;
+  XMLHttpRequest.prototype.open = function (method, url, ...rest) {
+    this._pakeBlocked = isBlocked(url);
+    return originalOpen.call(this, method, url, ...rest);
+  };
+  XMLHttpRequest.prototype.send = function (body) {
+    if (this._pakeBlocked) return;
+    return originalSend.call(this, body);
+  };
+
+  // 4. navigator.sendBeacon (Sentry envelope often uses this)
+  if (navigator.sendBeacon) {
+    const originalBeacon = navigator.sendBeacon.bind(navigator);
+    navigator.sendBeacon = function (url, data) {
+      if (isBlocked(url)) return true;
+      return originalBeacon(url, data);
+    };
+  }
+})();
+
 const shortcuts = {
   "[": () => window.history.back(),
   "]": () => window.history.forward(),

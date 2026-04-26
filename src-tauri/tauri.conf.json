@@ -1,11 +1,11 @@
 {
-  "productName": "Weekly",
-  "identifier": "com.pake.weekly",
+  "productName": "Kook",
+  "identifier": "com.pake.kook",
   "version": "3.11.3",
   "app": {
     "withGlobalTauri": true,
     "trayIcon": {
-      "iconPath": "png/weekly_512.png",
+      "iconPath": "png/kook_256.ico",
       "iconAsTemplate": false,
       "id": "pake-tray"
     },
