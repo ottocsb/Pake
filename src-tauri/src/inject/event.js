@@ -1,9 +1,6 @@
 // Block useless tracking requests (Baidu analytics, Sentry, etc.)
 (function blockTrackingRequests() {
-  const blockedPatterns = [
-    /hm\.baidu\.com\/hm\.js/i,
-    /sentry\.kookapp\.cn/i,
-  ];
+  const blockedPatterns = [/hm\.baidu\.com\/hm\.js/i, /sentry\.kookapp\.cn/i];
   const isBlocked = (v) =>
     typeof v === "string" && blockedPatterns.some((p) => p.test(v));
 

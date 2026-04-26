@@ -1,6 +1,4 @@
 window.addEventListener("DOMContentLoaded", (_event) => {
-
-
   const ads = `
     .audio-center-promotion,
     div.mixed-ad-carousel-wrapper,
